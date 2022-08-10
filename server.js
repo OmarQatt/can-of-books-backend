@@ -13,6 +13,8 @@ const app = express();
 // db.once('open', () => console.log('Connected To Database'))
 
 app.use(cors());
+app.use(express.json());
+
 const PORT = process.env.PORT || 3001;
 
 app.get('/test', (request, response) => {
@@ -21,19 +23,60 @@ app.get('/test', (request, response) => {
 })
 
 
-const booksRouter = require('./module/Books');
+// const booksRouter = require('./module/Books');
+// const { response } = require('express');
+// booksRouter();
+
+
+
+const BooksModel = require('./module/Books');
 const { response } = require('express');
-booksRouter();
-
-
-const book = mongoose.model('BooksModel')
 app.get('/books',(req , res) => {
 
-  book.find({}, (err, books) => {
+  BooksModel.find({}, (err, books) => {
    if (err) res.status(500).json({ message: err.message });
    else res.send(books);
   })
 })
+app.post('/books', createBook);
+app.delete('/books/:id', deleteBook);
+app.put('/books/:id', updateBook);
 
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
+
+
+
+
+function updateBook(req,res) {
+  const {book} = req.body;
+  const id = req.params.id;
+
+  BooksModel.findByIdAndUpdate(id ,book, (err, sendRec) => {
+    if (err) res.status(500).json({ message: err.message });
+    else {
+      res.send(sendRec)}
+})
+
+}
+
+function deleteBook (req, res) {
+  const id = req.params.id;
+  console.log(id);
+  BooksModel.findByIdAndDelete(id, (err, sendRec) => {
+    if (err) res.status(500).json({ message: err.message });
+    else {
+      res.send(sendRec)}
+})
+}
+
+function createBook(req , res ) {
+  console.log(req.body);
+  const {newBook} = req.body;
+  const book = new BooksModel(newBook);
+ book.save();
+  res.status(201).send(book);
+}
+
+
+

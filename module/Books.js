@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 
-function renderBook (req , res) {
+
     mongoose.connect(process.env.DATABASE_URL);
 
 const newBook = new mongoose.Schema({
@@ -28,10 +28,12 @@ const book3 = new BooksModel({
     status: 'available'
 })
 
-book1.save();
-book2.save();
-book3.save();
+// book1.save();
+// book2.save();
+// book3.save();
 
-}
 
-module.exports = renderBook 
+
+
+
+module.exports = BooksModel
